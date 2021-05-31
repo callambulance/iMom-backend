@@ -33,8 +33,10 @@ public class AnswerLikesService {
 
 
     public Integer findAllByAnswerId(Long answerId) {
-        return answerLikesRepository.countAllByValueIsTrueAndForumAnswerId(answerId)
+        Integer likes =  answerLikesRepository.countAllByValueIsTrueAndForumAnswerId(answerId)
                 - answerLikesRepository.countAllByValueIsFalseAndForumAnswerId(answerId);
+        System.out.println(likes);
+        return likes;
     }
 
     public AnswerLikeDto checkUserLike(Long answerId, Long userId){

@@ -17,4 +17,6 @@ public class ForumAnswerDTO {
     @ApiModelProperty(value = "Date of submission")
     private LocalDate date;
 
+    private Integer likesQuantity;
+
 }

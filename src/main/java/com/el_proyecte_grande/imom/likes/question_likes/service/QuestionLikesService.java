@@ -26,8 +26,9 @@ public class QuestionLikesService {
     }
 
     public Integer findAllByQuestionId(Long questionId) {
-        return questionLikesRepository.countAllByValueIsTrueAndForumQuestionId(questionId)
+        Integer likes = questionLikesRepository.countAllByValueIsTrueAndForumQuestionId(questionId)
                 - questionLikesRepository.countAllByValueIsFalseAndForumQuestionId(questionId);
+        return likes;
     }
 
 

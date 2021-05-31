@@ -16,6 +16,10 @@ public class BlogArticleService {
         return blogArticleRepository.findAllByOrderByDateDesc();
     }
 
+    public BlogArticle getArticlesById(Long id) {
+        return blogArticleRepository.findById(id).orElseThrow();
+    }
+
     public List<BlogArticle> getArticlesByCategory(String category) {
         return blogArticleRepository.findByCategory(category);
     }
@@ -30,4 +34,6 @@ public class BlogArticleService {
         } while (articleOfTheDay == null);
         return articleOfTheDay;
     }
+
+
 }

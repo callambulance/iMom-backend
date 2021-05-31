@@ -1,5 +1,6 @@
 package com.el_proyecte_grande.imom.googleCalendar.controller;
 import com.el_proyecte_grande.imom.authentication.google_authentication.controller.GoogleAuthenticationController;
+import com.el_proyecte_grande.imom.googleCalendar.model.UserEvent;
 import com.el_proyecte_grande.imom.tasks_before_birth.model.TaskBeforeBirthDTO;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.Calendar;
@@ -11,6 +12,10 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 
 import java.security.GeneralSecurityException;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 
@@ -34,45 +39,101 @@ public class GoogleCalendarController {
     @CrossOrigin
     @ApiOperation("Operation to return all events")
     @GetMapping("/calendar-events")
-    public Events getCalendarEvents() throws IOException, GeneralSecurityException {
+    public List<UserEvent> getCalendarEvents() throws IOException, GeneralSecurityException {
+
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        List<UserEvent> userEventsList = new ArrayList();
         if (client == null){
             buildCalendar();
         }
-
         Events events = client.events().list("primary").execute();
 
         List<Event> items = events.getItems();
         for (Event event : items) {
-            System.out.println(event.getSummary()); }
+            UserEvent userEvent = new UserEvent();
+            Map<String, String> data = new HashMap<>();
+                if ((event.getStart().getDateTime() != null)) {
+                    String dateTime = event.getStart().getDateTime().toStringRfc3339();
+                    String[] parts = dateTime.split("\\+");
+                    String part1 = parts[0];
+//                    DateTime dateTime1 = new DateTime(part1);
+                    userEvent.setStartDateTime(part1);
+                }
+                if ((event.getEnd().getDateTime() != null)) {
+                    String dateTime = event.getEnd().getDateTime().toStringRfc3339();
+                    String[] parts = dateTime.split("\\+");
+                    String part1 = parts[0];
+                    userEvent.setEndDateTime(part1);
+                    userEvent.setName(event.getSummary());
+                    userEvent.setDescription(event.getDescription());
+                    userEvent.setLocation(event.getLocation());
 
-        return events;
-    }
+                }
+//                data.put("name", event.getSummary());
+//                data.put("description", event.getDescription());
+//                data.put("location", event.getLocation());
+//                data.put("color", "#3365ed");
+//                userEvent.setData(data);
+            System.out.println(event.getSummary());
+
+            userEventsList.add(userEvent);
+            }
+
+        return userEventsList;
+        }
 
 
+//    @RequestParam String eventDateTime
     @CrossOrigin
     @ApiOperation("Operation to create new event")
     @PostMapping("/new-event")
-    public Event createNewEvent(@RequestParam TaskBeforeBirthDTO task, @RequestParam String eventDateTime) throws IOException, GeneralSecurityException {
+    public Event createNewEvent(@RequestBody UserEvent userEvent) throws IOException, GeneralSecurityException {
+        System.out.println("I'M HERE");
+
         if (client == null){
             buildCalendar();
         }
 
-        DateTime startDateTime = new DateTime(eventDateTime);
+        String[] partsStart = userEvent.getStartDateTime().split("Z");
+        String startTime = partsStart[0];
+        startTime += ":00.000";
+        String[] partsEnd = userEvent.getEndDateTime().split("Z");
+        String endTime = partsEnd[0];
+        endTime += ":00.000";
+        System.out.println(startTime);
+        System.out.println(endTime);
+        DateTime startDateTime = new DateTime(startTime);
         EventDateTime start = new EventDateTime()
                 .setDateTime(startDateTime);
 
-        EventAttendee[] attendees = new EventAttendee[] {
-                new EventAttendee().setEmail(GoogleAuthenticationController.userDetails.getEmail()),
-        };
+        System.out.println(start);
+
+        DateTime endDateTime = new DateTime(endTime);
+        EventDateTime end = new EventDateTime()
+                .setDateTime(endDateTime);
+
+        System.out.println(end);
+
+//        EventAttendee[] attendees = new EventAttendee[] {
+//                new EventAttendee().setEmail("lashark11@gmail.com"),
+//        };
 
         Event newEvent = new Event()
-                .setSummary(task.getTaskName())
-                .setDescription(task.getTaskText())
-                .setStatus(String.valueOf(task.getTaskStatus()))
+                .setSummary(userEvent.getName())
+                .setDescription(userEvent.getDescription())
+//                .setStatus(String.valueOf(userEvent.getStatus()))
+                .setLocation(userEvent.getLocation())
                 .setStart(start)
-                .setAttendees(Arrays.asList(attendees));
+                .setEnd(end);
+//                .setAttendees(Arrays.asList(attendees));
 
-        client.events().insert("primary", newEvent);
+        String calendarId = "primary";
+        newEvent = client.events().insert(calendarId, newEvent).execute();
+        System.out.printf("Event created: %s\n", newEvent.getHtmlLink());
+//        client.events().insert("primary", newEvent);
+        System.out.println("END");
+        GoogleAuthenticationController.getCredentials();
 
         return newEvent;
     }
@@ -92,6 +153,5 @@ public class GoogleCalendarController {
         }
     }
 }
-
 
 

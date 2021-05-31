@@ -17,4 +17,6 @@ public class AnswerLikeDto {
 
     @ApiModelProperty(value = "Value where true=like / false=dislike")
     private boolean value;
+
+
 }
