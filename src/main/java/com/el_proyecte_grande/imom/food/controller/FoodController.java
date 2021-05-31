@@ -30,4 +30,11 @@ public class FoodController {
     public List<Food> showFoodByMealtime(@PathVariable("mealtime") String mealtime){
         return foodService.getFoodByMealtime(mealtime);
     }
+
+    @CrossOrigin
+    @GetMapping("/food")
+    public List<Food> getFood(){
+        return foodService.findAll();
+    }
+
 }

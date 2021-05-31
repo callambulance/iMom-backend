@@ -1,9 +1,5 @@
 package com.el_proyecte_grande.imom.authentication.google_authentication.controller;
-import com.el_proyecte_grande.imom.users.model.GoogleUser;
-import com.el_proyecte_grande.imom.users.model.User;
-import com.el_proyecte_grande.imom.users.service.UserDetailsService;
 import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.auth.oauth2.DataStoreCredentialRefreshListener;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.googleapis.auth.oauth2.*;
@@ -19,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,11 +25,6 @@ import java.util.*;
 @Slf4j
 @RestController
 public class GoogleAuthenticationController {
-    private final UserDetailsService userDetailsService;
-
-    public GoogleAuthenticationController(UserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
-    }
 
     public static NetHttpTransport httpTransport;
     public static JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
@@ -42,7 +32,7 @@ public class GoogleAuthenticationController {
     private static final List<String> SCOPES = Collections.singletonList(CalendarScopes.CALENDAR);
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
     public static Credential authorization;
-    public static GoogleUser userDetails;
+
 
 
 
@@ -50,7 +40,6 @@ public class GoogleAuthenticationController {
     @RequestMapping(value = "google-login", method = RequestMethod.GET)
     public void googleConnectionStatus(OAuth2AuthenticationToken token) throws Exception {
         getCredentials();
-        userDetails = userDetailsService.getUserDetails(token);
     }
 
 

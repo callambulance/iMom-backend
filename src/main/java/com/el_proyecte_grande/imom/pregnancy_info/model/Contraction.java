@@ -1,10 +1,13 @@
 package com.el_proyecte_grande.imom.pregnancy_info.model;
 
+import com.google.api.client.util.DateTime;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -22,8 +25,12 @@ public class Contraction {
     private PregnancyInfo pregnancyInfo;
 
     @ApiModelProperty(value = "Duration of contraction")
-    private int duration;
+    private double duration;
 
-    @ApiModelProperty(value = "Strength of contraction")
-    private int strength;
+//    @ApiModelProperty(value = "Strength of contraction")
+//    private int strength;
+
+    @ApiModelProperty(value = "Duration of contraction")
+    private String dateTime;
+
 }

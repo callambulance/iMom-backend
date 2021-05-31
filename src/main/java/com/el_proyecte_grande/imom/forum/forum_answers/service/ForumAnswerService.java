@@ -5,15 +5,14 @@ import com.el_proyecte_grande.imom.forum.forum_answers.model.ForumAnswerDTO;
 import com.el_proyecte_grande.imom.forum.forum_answers.repository.ForumAnswerRepository;
 import com.el_proyecte_grande.imom.forum.forum_questions.model.ForumQuestion;
 import com.el_proyecte_grande.imom.forum.forum_questions.repository.ForumQuestionRepository;
-import com.el_proyecte_grande.imom.user_diary.model.Diary;
-import com.el_proyecte_grande.imom.user_diary.model.DiaryDTO;
+import com.el_proyecte_grande.imom.likes.answer_likes.service.AnswerLikesService;
 import com.el_proyecte_grande.imom.users.model.User;
 import com.el_proyecte_grande.imom.users.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,11 +20,13 @@ public class ForumAnswerService {
     private final ForumAnswerRepository forumAnswerRepository;
     private final UserRepository userRepository;
     private final ForumQuestionRepository forumQuestionRepository;
+    private final AnswerLikesService answerLikesService;
 
-    public ForumAnswerService(ForumAnswerRepository forumAnswerRepository, UserRepository userRepository, ForumQuestionRepository forumQuestionRepository) {
+    public ForumAnswerService(ForumAnswerRepository forumAnswerRepository, UserRepository userRepository, ForumQuestionRepository forumQuestionRepository, AnswerLikesService answerLikesService) {
         this.forumAnswerRepository = forumAnswerRepository;
         this.userRepository = userRepository;
         this.forumQuestionRepository = forumQuestionRepository;
+        this.answerLikesService = answerLikesService;
     }
 
     public List<ForumAnswerDTO> findAllByForumQuestionId(Long questionId) {
@@ -53,16 +54,27 @@ public class ForumAnswerService {
         forumAnswerDTO.setId(forumAnswer.getId());
         forumAnswerDTO.setAnswer(forumAnswer.getAnswer());
         forumAnswerDTO.setDate(forumAnswer.getDate());
+        forumAnswerDTO.setLikesQuantity(answerLikesService.findAllByAnswerId(forumAnswer.getId()));
         return forumAnswerDTO;
     }
 
     private List<ForumAnswerDTO> convertToList(List<ForumAnswer> forumAnswerList) {
-        ModelMapper modelMapper = new ModelMapper();
-
-        return forumAnswerList
-                .stream()
-                .map(answer -> modelMapper.map(answer, ForumAnswerDTO.class))
-                .collect(Collectors.toList());
+        List<ForumAnswerDTO> forumAnswerDTOList = new ArrayList<>();
+        for(ForumAnswer a : forumAnswerList){
+            ForumAnswerDTO forumAnswerDTO = new ForumAnswerDTO();
+            forumAnswerDTO.setId(a.getId());
+            forumAnswerDTO.setAnswer(a.getAnswer());
+            forumAnswerDTO.setDate(a.getDate());
+            forumAnswerDTO.setLikesQuantity(answerLikesService.findAllByAnswerId(a.getId()));
+            forumAnswerDTOList.add(forumAnswerDTO);
+        }
+        return forumAnswerDTOList;
+//        ModelMapper modelMapper = new ModelMapper();
+//
+//        return forumAnswerList
+//                .stream()
+//                .map(answer -> modelMapper.map(answer, ForumAnswerDTO.class))
+//                .collect(Collectors.toList());
     }
 
     public List<ForumAnswer> findAll() {

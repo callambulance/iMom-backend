@@ -97,5 +97,4 @@ public class PregnancyInfoService {
                 .map(pregnancyInfo -> modelMapper.map(pregnancyInfo, PregnancyInfoDTO.class))
                 .collect(Collectors.toList());
     }
-
 }

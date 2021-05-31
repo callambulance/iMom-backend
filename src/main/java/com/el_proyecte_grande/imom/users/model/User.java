@@ -15,12 +15,21 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name = "users")
+@Table(	name = "users",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = "username"),
+                @UniqueConstraint(columnNames = "email")
+        })
 public class User {
 
     @Id
@@ -30,12 +39,20 @@ public class User {
 
     private String googleId;
 
+//    @NotBlank
+    @Size(max = 50)
+    private String username;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "parent")
     private List<Kid> kids;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
     private PregnancyInfo pregnancyInfo;
+
+//    @OneToOne(cascade = CascadeType.ALL)
+//    @JoinColumn(name = "pregnancy_status_id", referencedColumnName = "pregnancy_status_id")
+//    private PregnancyStatus pregnancyStatus;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private List<ForumQuestion> forumQuestionList;
@@ -59,19 +76,41 @@ public class User {
     @Column(name = "name")
     private String name;
 
-    @ApiModelProperty(value = "User's age")
-    private Integer age;
+//    @ApiModelProperty(value = "User's last name")
+//    private String lastName;
+
+//    @ApiModelProperty(value = "User's age")
+//    private Integer age;
+
     @ApiModelProperty(value = "User's e-mail")
+    @NotBlank
+    @Size(max = 50)
+    @Email
     private String email;
 
     @ApiModelProperty(value = "User's password")
+//    @NotBlank
+    @Size(max = 120)
     private String password;
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(	name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
 
-    public User(String name, String email, Integer age) {
+
+//    public User(String name, String email, Integer age) {
+//        this.name = name;
+//        this.email = email;
+//        this.age = age;
+//    }
+
+    public User(String username, String name, String email, String password) {
+        this.username = username;
         this.name = name;
         this.email = email;
-        this.age = age;
+        this.password = password;
     }
 
 }

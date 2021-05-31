@@ -18,5 +18,7 @@ public class Food {
     private String recipeName;
     private String recipeText;
     private String mealTime;
+    private String day;
+
 
 }

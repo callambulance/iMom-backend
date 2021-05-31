@@ -55,7 +55,7 @@ public class TaskBeforeBirthController {
     }
 
     @CrossOrigin
-    @PutMapping("/tasks-before-birth/{taskId}/update")
+    @PostMapping("/tasks-before-birth/{taskId}/update")
     public void updateTask(@PathVariable("taskId") Long taskId, @RequestBody TaskBeforeBirthDTO taskBeforeBirthDTO) {
         System.out.println(taskBeforeBirthDTO.getTaskText());
         taskBeforeBirthService.updateTask(taskId, taskBeforeBirthDTO);

@@ -26,6 +26,14 @@ public class BlogArticleController {
     }
 
     @CrossOrigin
+    @ApiOperation("Operation to get blog article by id")
+    @GetMapping("/blog/article/{id}")
+    public BlogArticle getArticlesById(@PathVariable("id") Long id) {
+        log.info("Log Message: ");
+        return blogArticleService.getArticlesById(id);
+    }
+
+    @CrossOrigin
     @ApiOperation("Operation to list blog articles ordered by category")
     @GetMapping("/blog/articles/{category}")
     public List<BlogArticle> getArticlesByCategory(@PathVariable("category") String category) {

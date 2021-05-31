@@ -30,8 +30,9 @@ public class ForumQuestionController {
 
     @CrossOrigin
     @ApiOperation("Operation to save new forum question to given user ID")
-    @PostMapping("forum-questions/add_question")
+    @PostMapping("/forum-questions/add_question")
     public ForumQuestionDTO saveForumQuestion(@RequestParam Long userId, @RequestBody ForumQuestionDTO forumQuestionDTO) {
+        System.out.println("request");
         return forumQuestionService.saveForumQuestion(userId, forumQuestionDTO);
     }
 

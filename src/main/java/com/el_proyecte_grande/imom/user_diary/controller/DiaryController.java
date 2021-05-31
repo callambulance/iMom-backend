@@ -21,8 +21,8 @@ public class DiaryController {
 
     @CrossOrigin
     @ApiOperation("Operation to list all diaries by given user ID")
-    @GetMapping("/diaries")
-    public List<DiaryDTO> showDiary(@RequestParam Long userId) {
+    @GetMapping("/diary/{userId}")
+    public List<DiaryDTO> showDiary(@PathVariable("userId") Long userId) {
         log.info("Log Message: ");
         return diaryService.findAllByUserID(userId);
     }

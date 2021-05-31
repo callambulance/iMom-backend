@@ -18,6 +18,10 @@ public class FoodService {
         return foodRepository.findById(ID).orElseThrow();
     }
 
+    public List<Food> findAll(){
+        return foodRepository.findAll();
+    }
+
     public List<Food> getFoodByMealtime(String mealTime){
         return foodRepository.findAllByMealTime(mealTime);
     }

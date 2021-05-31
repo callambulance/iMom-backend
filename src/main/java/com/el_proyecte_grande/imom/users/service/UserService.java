@@ -20,6 +20,8 @@ import com.el_proyecte_grande.imom.users.model.User;
 import com.el_proyecte_grande.imom.users.model.UserDTO;
 import com.el_proyecte_grande.imom.users.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -64,9 +66,20 @@ public class UserService {
         return convert(userRepository.save(user));
     }
 
-    private User convert(UserDTO userDTO, List<Kid> kidList, PregnancyInfo pregnancyInfo, List<ForumQuestion> forumQuestionList, List<ForumAnswer> forumAnswerList, List<Diary> diaryList, List<TaskBeforeBirth> taskBeforeBirthList, List<TaskAfterBirth> taskAfterBirthList, List<Feeding> feedingList) {
+    public User convert(UserDTO userDTO){
+        User user = new User();
+        user.setEmail(userDTO.getEmail());
+        user.setName(userDTO.getName());
+        return user;
+    }
+
+    public User convert(UserDTO userDTO, List<Kid> kidList, PregnancyInfo pregnancyInfo,
+                        List<ForumQuestion> forumQuestionList, List<ForumAnswer> forumAnswerList, List<Diary> diaryList,
+                        List<TaskBeforeBirth> taskBeforeBirthList, List<TaskAfterBirth> taskAfterBirthList,
+                        List<Feeding> feedingList) {
         User user = new User();
         user.setName(userDTO.getName());
+        user.setUsername(userDTO.getUsername());
         user.setEmail(userDTO.getEmail());
         user.setKids(kidList);
         user.setPregnancyInfo(pregnancyInfo);
@@ -79,11 +92,19 @@ public class UserService {
         return user;
     }
 
-    private UserDTO convert(User user) {
+    public UserDTO convert(User user) {
         UserDTO userDTO = new UserDTO();
         userDTO.setId(user.getId());
         userDTO.setName(user.getName());
+        userDTO.setUsername(user.getUsername());
+        userDTO.setRoles(user.getRoles());
         userDTO.setEmail(user.getEmail());
         return userDTO;
+    }
+
+    @Transactional()
+    public User getUserByEmail(String email){
+        User user = userRepository.findByEmail(email);
+        return user;
     }
 }
