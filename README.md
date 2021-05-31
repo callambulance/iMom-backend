@@ -1,2 +1,1 @@
-# iMom
-backend part in progress
+iMom backend part writing with Spring, Hibernate, PostgreSQL
